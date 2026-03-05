@@ -1,0 +1,31 @@
+# 日志
+logs/
+*.log
+
+# 环境与配置
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+
+# 文档（私人内容）
+doc/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS
+.DS_Store

@@ -105,11 +105,11 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-编辑 `.env` 文件，填入你的配置（主要确保 `QWEN_API_KEY` 正确填写）：
+编辑 `.env` 文件，填入你的配置（主要确保 `DASHSCOPE_API_KEY` 正确填写）：
 
 ```env
 # Qwen API配置 (同时用于DashScope Embedding)
-QWEN_API_KEY=your_dashscope_api_key_here
+DASHSCOPE_API_KEY=your_dashscope_api_key_here
 QWEN_MODEL=qwen-plus
 
 # ChromaDB 本地向量数据库配置
