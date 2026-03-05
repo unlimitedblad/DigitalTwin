@@ -57,7 +57,7 @@ DigitalTwin/
 | 后端框架 | Flask 3.0 + Flask-CORS |
 | LLM | 通义千问（qwen-plus）via DashScope API |
 | 向量数据库 | ChromaDB（本地持久化） |
-| 嵌入模型 | DashScope text-embedding-v3 |
+| 嵌入模型 | DashScope text-embedding-v4（每次 API 请求上限 10 条）|
 | RAG 框架 | LangChain（langchain-chroma、langchain-community） |
 | 前端 | 原生 HTML/CSS/JS，无框架 |
 | 环境管理 | Conda（使用miniforge  环境名：DT） |

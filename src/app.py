@@ -97,7 +97,7 @@ class Config:
     QWEN_API_BASE = "https://dashscope.aliyuncs.com/compatible-mode"
     QWEN_API_PATH = "/v1/chat/completions"
     CHAT_MODEL = os.getenv("CHAT_MODEL", "qwen-plus")
-    EMBED_MODEL = os.getenv("EMBED_MODEL", "text-embedding-v3")
+    EMBED_MODEL = os.getenv("EMBED_MODEL", "text-embedding-v4")
     DASHSCOPE_API_KEY = os.getenv("DASHSCOPE_API_KEY", "")
 
     # 生成参数
@@ -178,16 +178,21 @@ rag_manager = RAGServiceManager()
 persona_manager = PersonaManager(Config.CHROMA_PERSIST_DIR)
 
 
-def retrieve_rag_context(rag_service: RAGService, question: str) -> Optional[str]:
+def retrieve_rag_context(rag_service: RAGService, question: str, persona: Optional[dict] = None) -> Optional[str]:
     """从 RAGService 检索相关上下文"""
     if not rag_service or not Config.RAG_ENABLED:
         return None
 
     try:
+        rp = (persona or {}).get("rag_params", {})
         results = rag_service.search(
             query=question,
-            k=Config.RAG_MAX_RESULTS,
-            similarity_threshold=0.3
+            k=rp.get("k", Config.RAG_MAX_RESULTS),
+            include_nearby=rp.get("include_nearby", True),
+            time_window_minutes=rp.get("time_window_minutes", 30),
+            nearby_per_result=rp.get("nearby_per_result", 8),
+            max_total_results=rp.get("max_total_results", 50),
+            lambda_mult=rp.get("lambda_mult", 0.6),
         )
 
         if not results:
@@ -326,7 +331,7 @@ def chat():
         messages_for_call = list(messages)
         rag_context = None
         if Config.RAG_ENABLED and rag_service:
-            rag_context = retrieve_rag_context(rag_service, user_message)
+            rag_context = retrieve_rag_context(rag_service, user_message, persona)
             if rag_context:
                 messages_for_call = inject_rag_context(messages_for_call, rag_context, system_prompt)
 

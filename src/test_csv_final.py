@@ -71,7 +71,7 @@ def _embed_chunk(embeddings_model, texts, chunk_idx, max_retries=3):
 
 def create_vectorstore_with_progress(
     documents, embeddings, collection_name,
-    embed_chunk_size=24,
+    embed_chunk_size=10,
     chroma_write_batch=500,
     incremental=False,
     max_workers=4,
@@ -82,7 +82,7 @@ def create_vectorstore_with_progress(
         documents: 要导入的文档列表
         embeddings: embedding 模型
         collection_name: ChromaDB 集合名称
-        embed_chunk_size: 每次调用 embed_documents 的文本数（DashScope v3 每次 API 请求上限 6 条，24≈4 批）
+        embed_chunk_size: 每次调用 embed_documents 的文本数（DashScope v4 每次 API 请求上限 10 条）
         chroma_write_batch: ChromaDB 批量写入大小
         incremental: 是否为增量更新模式（True=追加，False=清空重建）
         max_workers: 并发线程数
@@ -336,7 +336,7 @@ def main():
             print("请输入正整数")
 
         print("\nCreating/loading vector database...")
-        embeddings = DashScopeEmbeddings(model=os.getenv("EMBED_MODEL", "text-embedding-v3"))
+        embeddings = DashScopeEmbeddings(model=os.getenv("EMBED_MODEL", "text-embedding-v4"))
 
         ok = create_vectorstore_with_progress(
             splits, embeddings, collection_name=CHROMA_COLLECTION,

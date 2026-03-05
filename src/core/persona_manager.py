@@ -20,13 +20,23 @@ class PersonaManager:
             return []
         try:
             with open(self._path, "r", encoding="utf-8") as f:
-                return json.load(f)
+                data = json.load(f)
+            return [p for p in data if p.get("_type") != "schema"]
         except Exception:
             return []
 
     def _save(self, personas: List[dict]):
+        # 读取原始数据，保留 _type=schema 的文档头条目
+        existing = []
+        if os.path.exists(self._path):
+            try:
+                with open(self._path, "r", encoding="utf-8") as f:
+                    existing = json.load(f)
+            except Exception:
+                pass
+        schema_entries = [p for p in existing if p.get("_type") == "schema"]
         with open(self._path, "w", encoding="utf-8") as f:
-            json.dump(personas, f, ensure_ascii=False, indent=2)
+            json.dump(schema_entries + personas, f, ensure_ascii=False, indent=2)
 
     def list(self) -> List[dict]:
         return self._load()

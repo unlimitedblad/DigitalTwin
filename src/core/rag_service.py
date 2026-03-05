@@ -23,7 +23,7 @@ class RAGService:
         dashscope_api_key: str,
         collection_name: str = "wechat_embeddings",
         persist_directory: str = "./chroma_db",
-        embed_model: str = "text-embedding-v3",
+        embed_model: str = "text-embedding-v4",
     ):
         """
         初始化RAG服务
@@ -151,7 +151,8 @@ class RAGService:
         include_nearby: bool = True,
         time_window_minutes: int = 30,
         nearby_per_result: int = 8,
-        max_total_results: int = 50
+        max_total_results: int = 50,
+        lambda_mult: float = 0.6,
     ) -> List[Tuple[str, Dict[str, Any], float]]:
         """
         搜索相关聊天记录，并包含时间戳相近的记录
@@ -164,6 +165,7 @@ class RAGService:
             time_window_minutes: 时间窗口(分钟,默认30分钟)
             nearby_per_result: 每个结果附近获取的记录数(默认8条)
             max_total_results: 最大返回记录数(默认50,上限50)
+            lambda_mult: MMR 多样性权重，0=最多样 1=最相关(默认0.6)
 
         Returns:
             List of (content, metadata, similarity_score)
@@ -179,7 +181,7 @@ class RAGService:
             # fetch_k 先召回更多候选，再从中挑选差异最大的 k 条
             fetch_k = max(k * 4, 60)
             mmr_docs = self.vectorstore.max_marginal_relevance_search(
-                query, k=k, fetch_k=fetch_k, lambda_mult=0.6
+                query, k=k, fetch_k=fetch_k, lambda_mult=lambda_mult
             )
 
             formatted_results = []
